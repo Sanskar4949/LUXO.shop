@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f7;
+            color: #333;
+        }
+
+        header {
+            background-color: #000;
+            color: #fff;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            padding: 1rem;
+            background-color: #333;
+            color: #fff;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-details img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .product-details h1 {
+            font-size: 2rem;
+            margin: 1rem 0;
+        }
+
+        .product-details p {
+            font-size: 1.2rem;
+            margin: 1rem 0;
+        }
+
+        .product-details button {
+            background-color: #000;
+            color: #fff;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        .product-details button:hover {
+            background-color: #333;
+        }
+
+        footer {
+            background-color: #000;
+            color: #fff;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Product Details</h1>
+    </header>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="cart.html">Cart</a>
+        <a href="checkout.html">Checkout</a>
+    </nav>
+
+    <div class="container">
+        <div class="product-details">
+            <img id="product-image" src="https://via.placeholder.com/800" alt="Product Image">
+            <h1 id="product-name">Product Name</h1>
+            <p id="product-price">$0.00</p>
+            <p id="product-description">Product description will go here.</p>
+            <button id="add-to-cart">Add to Cart</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 LUXO Shopping Site</p>
+    </footer>
+
+    <script>
+        // Sample product data
+        const products = [
+            { id: 1, name: "Product 1", price: "$19.99", description: "Description for Product 1", image: "https://via.placeholder.com/800" },
+            { id: 2, name: "Product 2", price: "$29.99", description: "Description for Product 2", image: "https://via.placeholder.com/800" },
+            { id: 3, name: "Product 3", price: "$39.99", description: "Description for Product 3", image: "https://via.placeholder.com/800" },
+            { id: 4, name: "Product 4", price: "$49.99", description: "Description for Product 4", image: "https://via.placeholder.com/800" },
+            { id: 5, name: "Product 5", price: "$59.99", description: "Description for Product 5", image: "https://via.placeholder.com/800" },
+            { id: 6, name: "Product 6", price: "$69.99", description: "Description for Product 6", image: "https://via.placeholder.com/800" },
+        ];
+
+        // Get product ID from URL query parameters
+        const params = new URLSearchParams(window.location.search);
+        const productId = parseInt(params.get('product'));
+
+        // Find product data
+        const product = products.find(p => p.id === productId);
+
+        if (product) {
+            // Populate product details
+            document.getElementById('product-image').src = product.image;
+            document.getElementById('product-name').textContent = product.name;
+            document.getElementById('product-price').textContent = product.price;
+            document.getElementById('product-description').textContent = product.description;
+
+            // Add to cart functionality
+            document.getElementById('add-to-cart').addEventListener('click', () => {
+                const cart = JSON.parse(localStorage.getItem('cart')) || [];
+                cart.push({ name: product.name, price: product.price });
+                localStorage.setItem('cart', JSON.stringify(cart));
+                alert(`${product.name} added to cart!`);
+            });
+        } else {
+            alert("Product not found.");
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
