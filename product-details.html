@@ -47,11 +47,40 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
-        .product-details img {
+        /* Image Slider */
+        .slider {
+            position: relative;
+            max-width: 100%;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+
+        .slides {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .slides img {
             max-width: 100%;
             height: auto;
             border-radius: 10px;
         }
+
+        .prev, .next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 1.5rem;
+            border-radius: 5px;
+        }
+
+        .prev { left: 10px; }
+        .next { right: 10px; }
 
         .product-details h1 {
             font-size: 2rem;
@@ -61,6 +90,27 @@
         .product-details p {
             font-size: 1.2rem;
             margin: 1rem 0;
+        }
+
+        /* Size Selection */
+        .size-selection {
+            margin: 1rem 0;
+        }
+
+        .size-selection button {
+            background-color: #f5f5f7;
+            border: 1px solid #ccc;
+            padding: 0.5rem 1rem;
+            margin: 0.2rem;
+            cursor: pointer;
+            font-size: 1rem;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        .size-selection button:hover, .size-selection button.active {
+            background-color: #000;
+            color: #fff;
         }
 
         .product-details button {
@@ -100,10 +150,28 @@
 
     <div class="container">
         <div class="product-details">
-            <img id="product-image" src="https://via.placeholder.com/800" alt="Product Image">
+            <div class="slider">
+                <button class="prev" onclick="prevSlide()">&#10094;</button>
+                <div class="slides">
+                    <img id="slide1" src="images/product1-1.jpg" alt="Product Image 1">
+                    <img id="slide2" src="images/product1-2.jpg" alt="Product Image 2">
+                    <img id="slide3" src="images/product1-3.jpg" alt="Product Image 3">
+                </div>
+                <button class="next" onclick="nextSlide()">&#10095;</button>
+            </div>
             <h1 id="product-name">Product Name</h1>
             <p id="product-price">$0.00</p>
             <p id="product-description">Product description will go here.</p>
+
+            <!-- Size Selection -->
+            <div class="size-selection">
+                <p>Select Size:</p>
+                <button class="size-btn">S</button>
+                <button class="size-btn">M</button>
+                <button class="size-btn">L</button>
+                <button class="size-btn">XL</button>
+            </div>
+
             <button id="add-to-cart">Add to Cart</button>
         </div>
     </div>
@@ -113,31 +181,29 @@
     </footer>
 
     <script>
-        // Sample product data
+        // Sample product data with local images
         const products = [
-            { id: 1, name: "Product 1", price: "$19.99", description: "Description for Product 1", image: "https://via.placeholder.com/800" },
-            { id: 2, name: "Product 2", price: "$29.99", description: "Description for Product 2", image: "https://via.placeholder.com/800" },
-            { id: 3, name: "Product 3", price: "$39.99", description: "Description for Product 3", image: "https://via.placeholder.com/800" },
-            { id: 4, name: "Product 4", price: "$49.99", description: "Description for Product 4", image: "https://via.placeholder.com/800" },
-            { id: 5, name: "Product 5", price: "$59.99", description: "Description for Product 5", image: "https://via.placeholder.com/800" },
-            { id: 6, name: "Product 6", price: "$69.99", description: "Description for Product 6", image: "https://via.placeholder.com/800" },
+            { id: 1, name: "Leather Jacket", price: "$19.99", description: "Leather-effect jacket. Notched lapel collar and long sleeves with zipped cuffs. Front zip pockets and inside pocket. Asymmetric zip-up front.", images: ["images/e.jpg", "images/f.jpg", "images/g.jpg",  "images/h.jpg"] },
+            { id: 2, name: "Puffer Jacket", price: "$29.99", description: "Regular fit, padded jacket. High neck and long sleeves. Welt pockets at the hip. Elasticated trims. Zip-up front.", images: ["images/x.jpg", "images/y", "images/z.jpg"] },
+            { id: 3, name: "Premium White Shirt", price: "$39.99", description: "Shirt made of linen featuring a collar and long sleeves with buttoned cuffs. Button-up front.", images: ["images/m.jpg", "images/n.jpg", "images/o.jpg",  "images/p.jpg"] },
+            { id: 4, name: "High Neck", price: "$49.99", description: "Black t-shirt for me Solid Regular length High neck Long sleeves Knitted", images: ["images/q.jpg", "images/r.jpg", "images/s.jpg"] },
+            { id: 5, name: "Premium Black Shirt", price: "$59.99", description: "Slim fit shirt made from a fabric that minimises the need for ironing after washing. Featuring an Italian collar, long sleeves with buttoned cuffs and a button-up front.", images: ["images/i.jpg", "images/j.jpg", "images/k.jpg",  "images/l.jpg"] },
+            { id: 6, name: "Wood color Jacket", price: "$69.99", description: "Regular fit jacket. Lapel collar and long sleeves with buttoned cuffs. Patch pockets with flaps on the chest and welt pockets on the hips. Front button fastening.", images: ["images/a.jpg", "images/b.jpg", "images/c.jpg", "images/d.jpg"] },
+
         ];
 
-        // Get product ID from URL query parameters
         const params = new URLSearchParams(window.location.search);
         const productId = parseInt(params.get('product'));
-
-        // Find product data
         const product = products.find(p => p.id === productId);
 
         if (product) {
-            // Populate product details
-            document.getElementById('product-image').src = product.image;
             document.getElementById('product-name').textContent = product.name;
             document.getElementById('product-price').textContent = product.price;
             document.getElementById('product-description').textContent = product.description;
 
-            // Add to cart functionality
+            const slides = document.querySelector(".slides");
+            slides.innerHTML = product.images.map(img => `<img src="${img}" alt="${product.name}">`).join("");
+
             document.getElementById('add-to-cart').addEventListener('click', () => {
                 const cart = JSON.parse(localStorage.getItem('cart')) || [];
                 cart.push({ name: product.name, price: product.price });
@@ -148,6 +214,25 @@
             alert("Product not found.");
             window.location.href = 'index.html';
         }
+
+        // Image slider functionality
+        let index = 0;
+        function showSlide(i) {
+            const slides = document.querySelector(".slides");
+            index = (i + product.images.length) % product.images.length;
+            slides.style.transform = `translateX(-${index * 100}%)`;
+        }
+
+        function prevSlide() { showSlide(index - 1); }
+        function nextSlide() { showSlide(index + 1); }
+
+        // Size selection functionality
+        document.querySelectorAll(".size-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.querySelectorAll(".size-btn").forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+            });
+        });
     </script>
 </body>
 </html>
